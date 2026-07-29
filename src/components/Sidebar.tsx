@@ -99,13 +99,13 @@ const menusMaster = [
 ];
 
 export default function Sidebar() {
-  const {
-    role,
-    isAdmin,
-    isGerente,
-    isFuncionario,
-  } = usePermissao();
-
+const {
+  role,
+  isMaster,
+  isAdmin,
+  isGerente,
+  isFuncionario,
+} = usePermissao();
   const pathname = usePathname();
   const router = useRouter();
 
