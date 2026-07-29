@@ -16,6 +16,8 @@ import {
   Settings,
   LogOut,
   Paperclip,
+  Building2,
+  ShieldCheck,
 } from "lucide-react";
 
 const menus = [
@@ -71,6 +73,28 @@ const menus = [
     href: "/dashboard/auditoria",
     icon: Paperclip,
     permissao: ["admin", "gerente"],
+  },
+];
+const menusMaster = [
+  {
+    nome: "Dashboard Master",
+    href: "/master",
+    icon: LayoutDashboard,
+  },
+  {
+    nome: "Empresas",
+    href: "/master/empresas",
+    icon: Building2,
+  },
+  {
+    nome: "Usuários",
+    href: "/master/usuarios",
+    icon: Users,
+  },
+  {
+    nome: "Auditoria Sistema",
+    href: "/master/auditoria",
+    icon: ShieldCheck,
   },
 ];
 
@@ -202,38 +226,70 @@ export default function Sidebar() {
         </div>
 
         <nav className="flex-1 py-4 overflow-y-auto">
-                    {menus
-            .filter((menu) => podeVer(menu))
-            .map((menu) => {
-              const Icon = menu.icon;
+               {role === "master"
+  ? menusMaster.map((menu) => {
+      const Icon = menu.icon;
 
-              const ativo =
-                pathname === menu.href ||
-                pathname.startsWith(menu.href + "/");
+      const ativo =
+        pathname === menu.href ||
+        pathname.startsWith(menu.href + "/");
 
-              return (
-                <Link
-                  key={menu.href}
-                  href={menu.href}
-                  className={`
-                    flex
-                    items-center
-                    gap-3
-                    px-6
-                    py-3
-                    transition
-                    ${
-                      ativo
-                        ? "bg-blue-600 text-white"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                    }
-                  `}
-                >
-                  <Icon size={20} />
-                  <span>{menu.nome}</span>
-                </Link>
-              );
-            })}
+      return (
+        <Link
+          key={menu.href}
+          href={menu.href}
+          className={`
+            flex
+            items-center
+            gap-3
+            px-6
+            py-3
+            transition
+            ${
+              ativo
+                ? "bg-blue-600 text-white"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }
+          `}
+        >
+          <Icon size={20} />
+          <span>{menu.nome}</span>
+        </Link>
+      );
+    })
+  : menus
+      .filter((menu) => podeVer(menu))
+      .map((menu) => {
+          const Icon = menu.icon;
+
+          const ativo =
+            pathname === menu.href ||
+            pathname.startsWith(menu.href + "/");
+
+          return (
+            <Link
+              key={menu.href}
+              href={menu.href}
+              className={`
+                flex
+                items-center
+                gap-3
+                px-6
+                py-3
+                transition
+                ${
+                  ativo
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                }
+              `}
+            >
+              <Icon size={20} />
+              <span>{menu.nome}</span>
+            </Link>
+          );
+        })
+}
         </nav>
 
         <div className="border-t border-slate-700 p-4">
