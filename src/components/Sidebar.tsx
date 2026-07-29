@@ -99,6 +99,7 @@ const menusMaster = [
 ];
 
 export default function Sidebar() {
+  console.log("SIDEBAR CARREGOU");
 const {
   role,
   isMaster,
