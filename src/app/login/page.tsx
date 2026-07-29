@@ -36,17 +36,20 @@ localStorage.setItem(
 );
 console.log(resposta.data);
 router.push("/dashboard");
-    } catch (error) {
+    }  catch (error) {
       console.log("ERRO NO LOGIN:");
 
       if (axios.isAxiosError(error)) {
         console.log("Status:", error.response?.status);
-        console.log("Resposta:", error.response?.data);
+        console.log("Resposta detalhada:", error.response?.data); // Mostra o motivo exato enviado pelo backend
+        
+        // Exibe o erro exato que veio do servidor (ex: senha incorreta, usuário não encontrado)
+        const mensagemErro = error.response?.data?.message || "E-mail ou senha incorretos.";
+        alert(mensagemErro);
       } else {
         console.log(error);
+        alert("Erro no login");
       }
-
-      alert("Erro no login");
     }
   }
 
