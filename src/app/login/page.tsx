@@ -4,7 +4,7 @@ import { useState } from "react";
 import api from "@/services/api";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import GraficoFaturamento from "@/components/GraficoFaturamento";
+
 
 export default function Login() {
   const router = useRouter();
