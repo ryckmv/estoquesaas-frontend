@@ -35,7 +35,11 @@ localStorage.setItem(
   JSON.stringify(resposta.data.usuario)
 );
 console.log(resposta.data);
-router.push("/dashboard");
+if (resposta.data.usuario.role === "master") {
+  router.push("/master");
+} else {
+  router.push("/dashboard");
+}
     }  catch (error) {
       console.log("ERRO NO LOGIN:");
 

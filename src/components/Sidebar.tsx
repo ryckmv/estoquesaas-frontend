@@ -99,7 +99,7 @@ const menusMaster = [
 ];
 
 export default function Sidebar() {
-  console.log("SIDEBAR CARREGOU");
+  
 const {
   role,
   isMaster,
@@ -107,9 +107,7 @@ const {
   isGerente,
   isFuncionario,
 } = usePermissao();
-console.log("SIDEBAR ROLE:", role);
-console.log("SIDEBAR ROLE:", role);
-console.log("IS MASTER:", isMaster);
+
   const pathname = usePathname();
   const router = useRouter();
 
