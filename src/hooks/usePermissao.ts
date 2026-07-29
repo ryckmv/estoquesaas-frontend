@@ -2,38 +2,26 @@
 
 import { useEffect, useState } from "react";
 
-
 export function usePermissao() {
 
   const [role, setRole] = useState<string | null>(null);
 
-
   useEffect(() => {
 
-    const usuario = localStorage.getItem("usuario");
-
+    const usuario =
+      localStorage.getItem("usuario");
 
     if (usuario) {
 
-      try {
+      const dados = JSON.parse(usuario);
 
-        const dados = JSON.parse(usuario);
+      console.log("USUARIO NO HOOK:", dados);
 
-        setRole(dados.role);
-
-      } catch (error) {
-
-        console.error(
-          "Erro ao ler usuário:",
-          error
-        );
-
-      }
+      setRole(dados.role);
 
     }
 
   }, []);
-
 
 
   return {

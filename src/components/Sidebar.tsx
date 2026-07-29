@@ -107,6 +107,8 @@ const {
   isFuncionario,
 } = usePermissao();
 console.log("SIDEBAR ROLE:", role);
+console.log("SIDEBAR ROLE:", role);
+console.log("IS MASTER:", isMaster);
   const pathname = usePathname();
   const router = useRouter();
 
