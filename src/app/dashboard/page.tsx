@@ -35,12 +35,13 @@ interface DashboardData {
     vendas: number;
   };
 
-  financeiro: {
-    vendasHoje: number;
-    vendasMes: number;
-    faturamentoHoje: number;
-    faturamentoMes: number;
-  };
+ financeiro: {
+  vendasHoje?: number;
+  vendasMes?: number;
+  faturamentoHoje?: number;
+  faturamentoMes?: number;
+  faturamentoTotal?: number;
+};
 
   estoque: {
     valorEstoque: number;
@@ -135,7 +136,11 @@ export default function Dashboard() {
 
         <Card
           titulo="Faturamento do Mês"
-          valor={(dados?.financeiro?.faturamentoMes ?? 0).toLocaleString(
+          valor={(
+  dados?.financeiro?.faturamentoMes ??
+  dados?.financeiro?.faturamentoTotal ??
+  0
+).toLocaleString(
             "pt-BR",
             {
               style: "currency",
@@ -167,7 +172,11 @@ export default function Dashboard() {
 
             <Linha
               titulo="Faturamento Hoje"
-              valor={(dados?.financeiro?.faturamentoHoje ?? 0).toLocaleString(
+              valor={(
+  dados?.financeiro?.faturamentoMes ??
+  dados?.financeiro?.faturamentoTotal ??
+  0
+).toLocaleString(
                 "pt-BR",
                 {
                   style: "currency",
