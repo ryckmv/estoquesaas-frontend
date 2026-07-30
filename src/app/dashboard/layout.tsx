@@ -33,19 +33,27 @@ export default function DashboardLayout({
     );
   }
 
-  return (
-    <div className="min-h-screen bg-slate-100 flex">
-      {/* Sidebar entra aqui no fluxo */}
-      <Sidebar />
+return (
+  <div className="min-h-screen bg-slate-100">
 
-      {/* Bloco da direita: no desktop ganha margem esquerda de 16rem (64px * 4 = w-64) para compensar o fixed */}
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
-        <Header />
+    <Sidebar />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-slate-100">
-          {children}
-        </main>
-      </div>
+    <div className="lg:ml-64 min-h-screen flex flex-col">
+
+      <Header />
+
+      <main className="
+        flex-1
+        p-4
+        sm:p-6
+        lg:p-8
+        bg-slate-100
+      ">
+        {children}
+      </main>
+
     </div>
-  );
+
+  </div>
+);
 }
