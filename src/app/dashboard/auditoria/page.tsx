@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { Loader2, ShieldAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { usePermissao } from "@/hooks/usePermissao";
+const router = useRouter();
+const { role, isAdmin } = usePermissao();
 
 interface LogAuditoria {
   id: string;

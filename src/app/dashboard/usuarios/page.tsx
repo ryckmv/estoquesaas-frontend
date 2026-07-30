@@ -57,10 +57,18 @@ export default function Usuarios() {
       alert("Erro ao desativar usuário.");
     }
   }
-
   useEffect(() => {
+  if (role && !isAdmin) {
+    router.replace("/dashboard");
+  }
+}, [role, isAdmin, router, ]);
+useEffect(() => {
+  if (isAdmin) {
     carregarUsuarios();
-  }, []);
+  } else {
+    setCarregando(false);
+  }
+}, [isAdmin]);
 
   if (carregando) {
     return (

@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { Loader2, Save, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { usePermissao } from "@/hooks/usePermissao";
+
 
 interface ContaData {
   nome: string;
@@ -13,6 +16,8 @@ interface ContaData {
 export default function ContaPage() {
   const [loading, setLoading] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const router = useRouter();
+  const { role, isAdmin } = usePermissao();
   const [form, setForm] = useState<ContaData>({
     nome: "",
     email: "",

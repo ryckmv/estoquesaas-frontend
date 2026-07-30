@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { Loader2, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { usePermissao } from "@/hooks/usePermissao";
+
 
 interface Empresa {
   id: string;
@@ -23,8 +26,11 @@ export default function ConfiguracoesPage() {
 
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const router = useRouter();
+const { role, isAdmin } = usePermissao();
 
   async function carregarEmpresa() {
+    
     try {
       const { data } = await api.get("/configuracoes");
 
@@ -43,9 +49,18 @@ export default function ConfiguracoesPage() {
     }
   }
 
-  useEffect(() => {
+useEffect(() => {
+  if (role && !isAdmin) {
+    router.replace("/dashboard");
+    return;
+  }
+
+  if (isAdmin) {
     carregarEmpresa();
-  }, []);
+  } else {
+    setCarregando(false);
+  }
+}, [role, isAdmin, router]);
 
   async function salvar() {
     try {
