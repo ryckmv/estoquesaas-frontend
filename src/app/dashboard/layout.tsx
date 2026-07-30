@@ -12,7 +12,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
   const [verificando, setVerificando] = useState(true);
 
   useEffect(() => {
@@ -35,13 +34,15 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 flex">
+      {/* Sidebar entra aqui no fluxo */}
       <Sidebar />
 
-      <div className="flex flex-col min-h-screen lg:ml-64">
+      {/* Bloco da direita: no desktop ganha margem esquerda de 16rem (64px * 4 = w-64) para compensar o fixed */}
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         <Header />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-slate-100">
           {children}
         </main>
       </div>
