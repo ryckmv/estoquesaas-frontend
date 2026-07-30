@@ -34,11 +34,15 @@ export default function Login() {
         JSON.stringify(resposta.data.usuario)
       );
       console.log(resposta.data);
-      if (resposta.data.usuario.role === "master") {
-        router.push("/master");
-      } else {
-        router.push("/dashboard");
-      }
+     const role = resposta.data.usuario.role;
+
+if (role === "master") {
+  router.push("/master");
+} else if (role === "funcionario") {
+  router.push("/dashboard/funcionario");
+} else {
+  router.push("/dashboard");
+}
     }  catch (error) {
       console.log("ERRO NO LOGIN:");
 
