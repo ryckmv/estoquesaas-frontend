@@ -23,15 +23,15 @@ export default function GraficoProdutosMaisVendidos({
   dados,
 }: Props) {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
+    <div className="bg-white rounded-xl shadow p-4 sm:p-6 w-full overflow-hidden">
 
-      <h2 className="font-bold text-xl mb-5">
+      <h2 className="font-bold text-lg sm:text-xl mb-4 sm:mb-5">
         Produtos Mais Vendidos
       </h2>
 
       <ResponsiveContainer
         width="100%"
-        height={300}
+        height={280}
       >
 
         <BarChart
@@ -43,9 +43,10 @@ export default function GraficoProdutosMaisVendidos({
 
           <XAxis
             dataKey="produto"
+            tick={{ fontSize: 12 }}
           />
 
-          <YAxis />
+          <YAxis tick={{ fontSize: 12 }} />
 
           <Tooltip />
 

@@ -107,12 +107,6 @@ export default function Sidebar() {
     isGerente,
     isFuncionario,
   } = usePermissao();
-  console.log("SIDEBAR TESTE");
-console.log("role:", role);
-console.log("isMaster:", isMaster);
-console.log("tipo role:", typeof role);
-console.log("comparação:", role === "master");
-
   const pathname = usePathname();
   const router = useRouter();
 
@@ -145,12 +139,6 @@ console.log("comparação:", role === "master");
 const listaMenus = isMaster
   ? menusMaster
   : menus.filter((menu) => podeVer(menu));
-
-console.log("========== SIDEBAR ==========");
-console.log("ROLE:", role);
-console.log("IS MASTER:", isMaster);
-console.log("MENUS:", listaMenus);
-console.log("=============================");
 
 return (
   <>
@@ -189,11 +177,13 @@ return (
     <aside
       className={`
         fixed
+        lg:static
         top-0
         left-0
         z-50
         h-screen
         w-64
+        shrink-0
         bg-slate-900
         text-white
         flex
@@ -210,10 +200,6 @@ return (
         lg:translate-x-0
       `}
     >
-      <div className="bg-red-600 text-white text-center p-3 font-bold">
-        TESTE SIDEBAR
-      </div>
-
       <div className="border-b border-slate-700 p-6">
 
         <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">

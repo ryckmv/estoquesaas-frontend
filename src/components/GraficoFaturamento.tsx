@@ -20,18 +20,18 @@ interface GraficoProps {
 
 export default function GraficoFaturamento({ dados }: GraficoProps) {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="font-bold text-xl mb-5">
+    <div className="bg-white rounded-xl shadow p-4 sm:p-6 w-full overflow-hidden">
+      <h2 className="font-bold text-lg sm:text-xl mb-4 sm:mb-5">
         Faturamento dos Últimos 7 Dias
       </h2>
 
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={dados}>
+      <ResponsiveContainer width="100%" height={280}>
+        <AreaChart data={dados} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="dia" />
+          <XAxis dataKey="dia" tick={{ fontSize: 12 }} />
 
-          <YAxis />
+          <YAxis tick={{ fontSize: 12 }} />
 <Tooltip
   formatter={(value) => [
     Number(value).toLocaleString("pt-BR", {

@@ -13,16 +13,20 @@ export default function MasterDashboard() {
     vendas: 0,
   });
 
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(false);
+
 
   useEffect(() => {
 
     async function carregar() {
 
+      setCarregando(true);
+      setErro(false);
+
       try {
 
         const resposta = await api.get("/master/dashboard");
-
-        console.log("MASTER DASHBOARD:", resposta.data);
 
         setDados(resposta.data);
 
@@ -32,6 +36,12 @@ export default function MasterDashboard() {
           "Erro dashboard master:",
           erro
         );
+
+        setErro(true);
+
+      } finally {
+
+        setCarregando(false);
 
       }
 
@@ -45,7 +55,7 @@ export default function MasterDashboard() {
 
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 sm:p-6 lg:p-8 w-full">
+    <div className="w-full">
 
       <div className="mb-6 sm:mb-8">
 
@@ -60,6 +70,13 @@ export default function MasterDashboard() {
       </div>
 
 
+      {erro && (
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl p-4">
+          Não foi possível carregar os dados do dashboard. Tente novamente mais tarde.
+        </div>
+      )}
+
+
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
 
 
@@ -67,6 +84,7 @@ export default function MasterDashboard() {
           titulo="Empresas"
           valor={String(dados.empresas)}
           icon={<Building2 size={28}/>}
+          carregando={carregando}
         />
 
 
@@ -74,6 +92,7 @@ export default function MasterDashboard() {
           titulo="Usuários"
           valor={String(dados.usuarios)}
           icon={<Users size={28}/>}
+          carregando={carregando}
         />
 
 
@@ -81,6 +100,7 @@ export default function MasterDashboard() {
           titulo="Produtos"
           valor={String(dados.produtos)}
           icon={<Package size={28}/>}
+          carregando={carregando}
         />
 
 
@@ -88,6 +108,7 @@ export default function MasterDashboard() {
           titulo="Vendas"
           valor={String(dados.vendas)}
           icon={<ShoppingCart size={28}/>}
+          carregando={carregando}
         />
 
 
@@ -118,10 +139,12 @@ function Card({
   titulo,
   valor,
   icon,
+  carregando,
 }: {
   titulo:string;
   valor:string;
   icon:React.ReactNode;
+  carregando?: boolean;
 }) {
 
 
@@ -138,9 +161,13 @@ function Card({
           </p>
 
 
-          <h2 className="text-3xl font-bold mt-2">
-            {valor}
-          </h2>
+          {carregando ? (
+            <div className="h-9 w-12 mt-2 bg-slate-200 rounded animate-pulse" />
+          ) : (
+            <h2 className="text-3xl font-bold mt-2">
+              {valor}
+            </h2>
+          )}
 
         </div>
 
