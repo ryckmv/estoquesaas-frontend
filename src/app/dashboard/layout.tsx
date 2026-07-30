@@ -11,42 +11,92 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   const router = useRouter();
 
   const [verificando, setVerificando] = useState(true);
 
+
   useEffect(() => {
+
     const token = localStorage.getItem("token");
+
 
     if (!token) {
       router.push("/login");
       return;
     }
 
+
     setVerificando(false);
+
   }, [router]);
 
+
+
   if (verificando) {
+
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-100 text-slate-600 font-medium animate-pulse">
+      <div className="
+        flex
+        items-center
+        justify-center
+        h-screen
+        bg-slate-100
+        text-slate-600
+        font-medium
+      ">
         Carregando...
       </div>
     );
+
   }
 
+
+
   return (
-    <div className="min-h-screen bg-slate-100 flex w-full relative">
-      {/* Sidebar (mantém a estrutura original fixa/responsiva dela) */}
+
+    <div className="
+      min-h-screen
+      bg-slate-100
+      flex
+      w-full
+    ">
+
+
       <Sidebar />
 
-      {/* Conteúdo Principal com o espaçamento correto no desktop para o menu não cobrir */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-64 h-screen overflow-hidden">
+
+      <div className="
+        flex-1
+        flex
+        flex-col
+        min-w-0
+        lg:ml-64
+      ">
+
+
         <Header />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 w-full bg-slate-100">
+
+        <main className="
+          flex-1
+          overflow-y-auto
+          p-4
+          sm:p-6
+          lg:p-8
+        ">
+
           {children}
+
         </main>
+
+
       </div>
+
+
     </div>
+
   );
+
 }
