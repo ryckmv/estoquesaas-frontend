@@ -137,84 +137,93 @@ export default function Sidebar() {
 
     return false;
   }
+const listaMenus = isMaster
+  ? menusMaster
+  : menus.filter((menu) => podeVer(menu));
 
-  const listaMenus = isMaster
-    ? menusMaster
-    : menus.filter((menu) => podeVer(menu));
+console.log("========== SIDEBAR ==========");
+console.log("ROLE:", role);
+console.log("IS MASTER:", isMaster);
+console.log("MENUS:", listaMenus);
+console.log("=============================");
 
-  return (
-    <>
-  {/* Botão do menu mobile */}
-  <button
-    onClick={() => setMenuAberto(true)}
-    className="
-      lg:hidden
-      fixed
-      top-4
-      left-4
-      z-[60]
-      bg-slate-900
-      text-white
-      p-2
-      rounded-lg
-      shadow-lg
-    "
-  >
-    <Menu size={24} />
-  </button>
-
-  {/* Fundo escuro */}
-  {menuAberto && (
-    <div
-      onClick={() => setMenuAberto(false)}
+return (
+  <>
+    {/* Botão do menu mobile */}
+    <button
+      onClick={() => setMenuAberto(true)}
       className="
-        fixed
-        inset-0
-        bg-black/40
-        z-40
         lg:hidden
+        fixed
+        top-4
+        left-4
+        z-[60]
+        bg-slate-900
+        text-white
+        p-2
+        rounded-lg
+        shadow-lg
       "
-    />
-  )}
+    >
+      <Menu size={24} />
+    </button>
 
-  {/* Sidebar */}
-  <aside
-    className={`
-      fixed
-      top-0
-      left-0
-      z-50
-      h-screen
-      w-64
-      bg-slate-900
-      text-white
-      flex
-      flex-col
-      transition-transform
-      duration-300
+    {menuAberto && (
+      <div
+        onClick={() => setMenuAberto(false)}
+        className="
+          fixed
+          inset-0
+          bg-black/40
+          z-40
+          lg:hidden
+        "
+      />
+    )}
 
-      ${
-        menuAberto
-          ? "translate-x-0"
-          : "-translate-x-full"
-      }
+    <aside
+      className={`
+        fixed
+        top-0
+        left-0
+        z-50
+        h-screen
+        w-64
+        bg-slate-900
+        text-white
+        flex
+        flex-col
+        transition-transform
+        duration-300
 
-      lg:translate-x-0
-    `}
-  >
-    <div className="border-b border-slate-700 p-6">
+        ${
+          menuAberto
+            ? "translate-x-0"
+            : "-translate-x-full"
+        }
 
-      <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
-        ES
+        lg:translate-x-0
+      `}
+    >
+      <div className="bg-red-600 text-white text-center p-3 font-bold">
+        TESTE SIDEBAR
       </div>
 
-      <h1 className="text-xl font-bold mt-4">
-        Estoque SaaS
-      </h1>
+      <div className="border-b border-slate-700 p-6">
 
-      <p className="text-slate-400 text-sm">
-        Sistema de Gestão
-      </p>
+        <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
+          ES
+        </div>
+
+        <h1 className="text-xl font-bold mt-4">
+          Estoque SaaS
+        </h1>
+
+        <p className="text-slate-400 text-sm">
+          Sistema de Gestão
+        </p>
+
+      
 
       <button
         onClick={() => setMenuAberto(false)}
