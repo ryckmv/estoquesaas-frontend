@@ -107,6 +107,11 @@ export default function Sidebar() {
     isGerente,
     isFuncionario,
   } = usePermissao();
+  console.log("SIDEBAR TESTE");
+console.log("role:", role);
+console.log("isMaster:", isMaster);
+console.log("tipo role:", typeof role);
+console.log("comparação:", role === "master");
 
   const pathname = usePathname();
   const router = useRouter();
