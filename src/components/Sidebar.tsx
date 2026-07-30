@@ -75,6 +75,7 @@ const menus = [
     permissao: ["admin", "gerente"],
   },
 ];
+
 const menusMaster = [
   {
     nome: "Dashboard Master",
@@ -99,13 +100,13 @@ const menusMaster = [
 ];
 
 export default function Sidebar() {
-const {
-  role,
-  isMaster,
-  isAdmin,
-  isGerente,
-  isFuncionario,
-} = usePermissao();
+  const {
+    role,
+    isMaster,
+    isAdmin,
+    isGerente,
+    isFuncionario,
+  } = usePermissao();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -119,14 +120,14 @@ const {
   function sair() {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
-
     router.push("/login");
   }
 
   function podeVer(menu: any) {
     if (!menu.permissao) return true;
 
-    if (isAdmin) return menu.permissao.includes("admin");
+    if (isAdmin)
+      return menu.permissao.includes("admin");
 
     if (isGerente)
       return menu.permissao.includes("gerente");
@@ -137,163 +138,138 @@ const {
     return false;
   }
 
+  const listaMenus = isMaster
+    ? menusMaster
+    : menus.filter((menu) => podeVer(menu));
+
   return (
     <>
-      {/* Botão Mobile */}
+  {/* Botão do menu mobile */}
+  <button
+    onClick={() => setMenuAberto(true)}
+    className="
+      lg:hidden
+      fixed
+      top-4
+      left-4
+      z-[60]
+      bg-slate-900
+      text-white
+      p-2
+      rounded-lg
+      shadow-lg
+    "
+  >
+    <Menu size={24} />
+  </button>
+
+  {/* Fundo escuro */}
+  {menuAberto && (
+    <div
+      onClick={() => setMenuAberto(false)}
+      className="
+        fixed
+        inset-0
+        bg-black/40
+        z-40
+        lg:hidden
+      "
+    />
+  )}
+
+  {/* Sidebar */}
+  <aside
+    className={`
+      fixed
+      top-0
+      left-0
+      z-50
+      h-screen
+      w-64
+      bg-slate-900
+      text-white
+      flex
+      flex-col
+      transition-transform
+      duration-300
+
+      ${
+        menuAberto
+          ? "translate-x-0"
+          : "-translate-x-full"
+      }
+
+      lg:translate-x-0
+    `}
+  >
+    <div className="border-b border-slate-700 p-6">
+
+      <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
+        ES
+      </div>
+
+      <h1 className="text-xl font-bold mt-4">
+        Estoque SaaS
+      </h1>
+
+      <p className="text-slate-400 text-sm">
+        Sistema de Gestão
+      </p>
 
       <button
-        onClick={() => setMenuAberto(true)}
-        className="
-          lg:hidden
-          fixed
-          top-4
-          left-4
-          z-50
-          bg-slate-900
-          text-white
-          p-2
-          rounded-lg
-          shadow-lg
-        "
+        onClick={() => setMenuAberto(false)}
+        className="lg:hidden absolute top-5 right-5"
       >
-        <Menu size={24} />
+        <X />
       </button>
 
-      {/* Fundo escuro */}
+    </div>
 
-      {menuAberto && (
-        <div
-          onClick={() => setMenuAberto(false)}
-          className="
-            lg:hidden
-            fixed
-            inset-0
-            bg-black/40
-            z-40
-          "
-        />
-      )}
+    <nav className="flex-1 overflow-y-auto py-4">
 
-      <aside
-        className={`
-          fixed
-          top-0
-          left-0
-          h-screen
-          w-64
-          bg-slate-900
-          text-white
-          flex
-          flex-col
-          z-50
-          transition-transform
-          duration-300
+      {listaMenus.map((menu) => {
 
-          ${
-            menuAberto
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
+        const Icon = menu.icon;
 
-          lg:translate-x-0
-          lg:static
-        `}
-      >
-        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+        const ativo =
+          pathname === menu.href ||
+          pathname.startsWith(menu.href + "/");
 
-          <div>
+        return (
 
-            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
-              ES
-            </div>
+          <Link
+            key={menu.href}
+            href={menu.href}
+            className={`
+              flex
+              items-center
+              gap-3
+              px-6
+              py-3
+              transition
 
-            <h1 className="text-xl font-bold mt-4">
-              Estoque SaaS
-            </h1>
-
-            <p className="text-slate-400 text-sm">
-              Sistema de Gestão
-            </p>
-
-          </div>
-
-          <button
-            onClick={() => setMenuAberto(false)}
-            className="lg:hidden"
+              ${
+                ativo
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              }
+            `}
           >
-            <X />
-          </button>
 
-        </div>
+            <Icon size={20} />
 
-        <nav className="flex-1 py-4 overflow-y-auto">
-               {role === "master"
-  ? menusMaster.map((menu) => {
-      const Icon = menu.icon;
+            <span>
+              {menu.nome}
+            </span>
 
-      const ativo =
-        pathname === menu.href ||
-        pathname.startsWith(menu.href + "/");
+          </Link>
 
-      return (
-        <Link
-          key={menu.href}
-          href={menu.href}
-          className={`
-            flex
-            items-center
-            gap-3
-            px-6
-            py-3
-            transition
-            ${
-              ativo
-                ? "bg-blue-600 text-white"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-            }
-          `}
-        >
-          <Icon size={20} />
-          <span>{menu.nome}</span>
-        </Link>
-      );
-    })
-  : menus
-      .filter((menu) => podeVer(menu))
-      .map((menu) => {
-          const Icon = menu.icon;
+        );
 
-          const ativo =
-            pathname === menu.href ||
-            pathname.startsWith(menu.href + "/");
+      })}
 
-          return (
-            <Link
-              key={menu.href}
-              href={menu.href}
-              className={`
-                flex
-                items-center
-                gap-3
-                px-6
-                py-3
-                transition
-                ${
-                  ativo
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }
-              `}
-            >
-              <Icon size={20} />
-              <span>{menu.nome}</span>
-            </Link>
-          );
-        })
-}
-        </nav>
-
-        <div className="border-t border-slate-700 p-4">
+    </nav>
+            <div className="border-t border-slate-700 p-4">
 
           <button
             onClick={sair}
@@ -311,13 +287,21 @@ const {
               transition
             "
           >
+
             <LogOut size={20} />
-            <span>Sair</span>
+
+            <span>
+              Sair
+            </span>
+
           </button>
 
         </div>
 
       </aside>
+
     </>
+
   );
+
 }
