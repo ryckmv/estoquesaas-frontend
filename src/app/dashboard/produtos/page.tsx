@@ -21,9 +21,7 @@ export default function Produtos() {
   async function carregarProdutos() {
     try {
       const resposta = await api.get("/produtos");
-
       setProdutos(resposta.data.produtos);
-
     } catch (error) {
       console.log(error);
       alert("Erro ao carregar produtos");
@@ -33,7 +31,6 @@ export default function Produtos() {
   }
 
   async function excluirProduto(id: string) {
-
     const confirmar = confirm(
       "Tem certeza que deseja excluir este produto?"
     );
@@ -41,21 +38,13 @@ export default function Produtos() {
     if (!confirmar) return;
 
     try {
-
       await api.delete(`/produtos/${id}`);
-
       alert("Produto excluído com sucesso!");
-
       carregarProdutos();
-
     } catch (error) {
-
       console.log(error);
-
       alert("Erro ao excluir produto");
-
     }
-
   }
 
   useEffect(() => {
@@ -64,108 +53,101 @@ export default function Produtos() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-8 text-slate-600 font-medium animate-pulse">
         Carregando produtos...
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-
-      <div className="flex justify-between items-center mb-6">
-
-        <h1 className="text-3xl font-bold">
-          Produtos
-        </h1>
+    <div className="p-4 sm:p-6 lg:p-8 w-full min-h-screen bg-slate-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900">
+            Produtos
+          </h1>
+          <p className="text-gray-500 text-sm sm:text-base mt-1">
+            Gerenciamento do catálogo e estoque de produtos
+          </p>
+        </div>
 
         <button
           onClick={() => router.push("/dashboard/produtos/novo")}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm sm:text-base font-medium transition-colors shadow-sm cursor-pointer w-full sm:w-auto"
         >
           Novo Produto
         </button>
-
       </div>
 
       {produtos.length === 0 ? (
-
-        <p>Nenhum produto cadastrado.</p>
-
+        <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+          Nenhum produto cadastrado.
+        </div>
       ) : (
+        <div className="bg-white rounded-xl shadow overflow-hidden w-full">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead className="bg-slate-200 text-slate-700 text-xs sm:text-sm uppercase tracking-wider">
+                <tr>
+                  <th className="p-3 sm:p-4 font-semibold">Nome</th>
+                  <th className="p-3 sm:p-4 font-semibold">Código</th>
+                  <th className="p-3 sm:p-4 font-semibold">Quantidade</th>
+                  <th className="p-3 sm:p-4 font-semibold">Venda</th>
+                  <th className="p-3 sm:p-4 font-semibold text-center">Ações</th>
+                </tr>
+              </thead>
 
-        <table className="w-full border border-gray-300">
+              <tbody className="divide-y divide-slate-100 text-sm sm:text-base">
+                {produtos.map((produto) => (
+                  <tr key={produto.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-3 sm:p-4 font-medium text-slate-900 whitespace-nowrap">
+                      {produto.nome}
+                    </td>
 
-          <thead>
+                    <td className="p-3 sm:p-4 text-slate-600 whitespace-nowrap font-mono">
+                      {produto.codigoBarras ?? "-"}
+                    </td>
 
-            <tr className="bg-gray-200">
+                    <td className="p-3 sm:p-4 text-slate-600 whitespace-nowrap">
+                      <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${
+                        produto.quantidade <= 0 
+                          ? "bg-red-100 text-red-700" 
+                          : "bg-slate-100 text-slate-700"
+                      }`}>
+                        {produto.quantidade} un.
+                      </span>
+                    </td>
 
-              <th className="border p-2">Nome</th>
-              <th className="border p-2">Código</th>
-              <th className="border p-2">Quantidade</th>
-              <th className="border p-2">Venda</th>
-              <th className="border p-2 text-center">Ações</th>
+                    <td className="p-3 sm:p-4 text-slate-800 whitespace-nowrap font-mono font-medium">
+                      R$ {Number(produto.precoVenda).toFixed(2)}
+                    </td>
 
-            </tr>
+                    <td className="p-3 sm:p-4 whitespace-nowrap">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() =>
+                            router.push(`/dashboard/produtos/editar/${produto.id}`)
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-2xs cursor-pointer"
+                        >
+                          Editar
+                        </button>
 
-          </thead>
-
-          <tbody>
-
-            {produtos.map((produto) => (
-
-              <tr key={produto.id}>
-
-                <td className="border p-2">
-                  {produto.nome}
-                </td>
-
-                <td className="border p-2">
-                  {produto.codigoBarras ?? "-"}
-                </td>
-
-                <td className="border p-2">
-                  {produto.quantidade}
-                </td>
-
-                <td className="border p-2">
-                  R$ {Number(produto.precoVenda).toFixed(2)}
-                </td>
-
-                <td className="border p-2">
-
-                  <div className="flex justify-center gap-2">
-
-                    <button
-                      onClick={() =>
-                        router.push(`/dashboard/produtos/editar/${produto.id}`)
-                      }
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      onClick={() => excluirProduto(produto.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                    >
-                      Excluir
-                    </button>
-
-                  </div>
-
-                </td>
-
-              </tr>
-
-            ))}
-
-          </tbody>
-
-        </table>
-
+                        <button
+                          onClick={() => excluirProduto(produto.id)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-2xs cursor-pointer"
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
-
     </div>
   );
 }

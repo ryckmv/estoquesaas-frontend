@@ -20,29 +20,43 @@ interface GraficoProps {
 
 export default function GraficoVendas({ dados }: GraficoProps) {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="font-bold text-xl mb-5">
+    <div className="bg-white rounded-xl shadow p-4 sm:p-6 w-full overflow-hidden">
+      <h2 className="font-bold text-lg sm:text-xl mb-4 sm:mb-5">
         Vendas dos Últimos 7 Dias
       </h2>
 
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={dados}>
-          <CartesianGrid strokeDasharray="3 3" />
+      <div className="w-full h-[280px] sm:h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart 
+            data={dados}
+            margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
 
-          <XAxis dataKey="dia" />
+            <XAxis 
+              dataKey="dia" 
+              tick={{ fontSize: 12 }} 
+              stroke="#64748b" 
+            />
 
-          <YAxis />
+            <YAxis 
+              tick={{ fontSize: 12 }} 
+              stroke="#64748b" 
+            />
 
-          <Tooltip />
+            <Tooltip />
 
-          <Line
-            type="monotone"
-            dataKey="vendas"
-            stroke="#2563eb"
-            strokeWidth={3}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            <Line
+              type="monotone"
+              dataKey="vendas"
+              stroke="#2563eb"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -22,7 +22,6 @@ export default function SegurancaPage() {
 
     try {
       setSalvando(true);
-      // Ajuste a rota para o endpoint de alteração de senha no backend
       await api.put("/conta/senha", {
         senhaAtual: form.senhaAtual,
         novaSenha: form.novaSenha,
@@ -38,17 +37,19 @@ export default function SegurancaPage() {
   }
 
   const inputClasses =
-    "w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none";
-  const labelClasses = "block text-sm font-semibold text-gray-700 mb-1.5";
+    "w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all";
+  const labelClasses = "block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5";
 
   return (
-    <form onSubmit={alterarSenha} className="max-w-2xl space-y-6">
+    <form onSubmit={alterarSenha} className="w-full space-y-6">
       <div>
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Shield size={20} className="text-blue-600" />
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <Shield size={22} className="text-blue-600" />
           Segurança da Conta
         </h2>
-        <p className="text-sm text-gray-500">Mantenha sua conta segura alterando sua senha periodicamente.</p>
+        <p className="text-sm text-gray-500 mt-1">
+          Mantenha sua conta segura alterando sua senha periodicamente
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -89,11 +90,11 @@ export default function SegurancaPage() {
         </div>
       </div>
 
-      <div className="pt-4 flex justify-end">
+      <div className="pt-2 flex justify-start">
         <button
           type="submit"
           disabled={salvando}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2.5 rounded-xl font-medium transition shadow-sm cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-sm cursor-pointer"
         >
           {salvando ? (
             <>

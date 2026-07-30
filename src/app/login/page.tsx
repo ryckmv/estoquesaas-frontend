@@ -5,7 +5,6 @@ import api from "@/services/api";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-
 export default function Login() {
   const router = useRouter();
 
@@ -28,26 +27,25 @@ export default function Login() {
       console.log("RESPOSTA DA API:");
       console.log(resposta.data);
 
-     localStorage.setItem("token", resposta.data.token);
+      localStorage.setItem("token", resposta.data.token);
 
-localStorage.setItem(
-  "usuario",
-  JSON.stringify(resposta.data.usuario)
-);
-console.log(resposta.data);
-if (resposta.data.usuario.role === "master") {
-  router.push("/master");
-} else {
-  router.push("/dashboard");
-}
+      localStorage.setItem(
+        "usuario",
+        JSON.stringify(resposta.data.usuario)
+      );
+      console.log(resposta.data);
+      if (resposta.data.usuario.role === "master") {
+        router.push("/master");
+      } else {
+        router.push("/dashboard");
+      }
     }  catch (error) {
       console.log("ERRO NO LOGIN:");
 
       if (axios.isAxiosError(error)) {
         console.log("Status:", error.response?.status);
-        console.log("Resposta detalhada:", error.response?.data); // Mostra o motivo exato enviado pelo backend
+        console.log("Resposta detalhada:", error.response?.data);
         
-        // Exibe o erro exato que veio do servidor (ex: senha incorreta, usuário não encontrado)
         const mensagemErro = error.response?.data?.message || "E-mail ou senha incorretos.";
         alert(mensagemErro);
       } else {
@@ -58,33 +56,51 @@ if (resposta.data.usuario.role === "master") {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="w-96 space-y-4">
-        <h1 className="text-3xl font-bold">
-          Estoque SaaS
-        </h1>
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-6">
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            Estoque SaaS
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Faça login para acessar sua conta
+          </p>
+        </div>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
+              E-mail
+            </label>
+            <input
+              className="border border-slate-300 rounded-lg p-3 w-full text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-blue-600 transition-all"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="border p-2 w-full"
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">
+              Senha
+            </label>
+            <input
+              className="border border-slate-300 rounded-lg p-3 w-full text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-blue-600 transition-all"
+              type="password"
+              placeholder="••••••••"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+            />
+          </div>
 
-        <button
-          className="bg-black text-white p-2 w-full"
-          onClick={entrar}
-        >
-          Entrar
-        </button>
+          <button
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium p-3 rounded-lg transition-colors shadow-md mt-2 text-sm sm:text-base cursor-pointer"
+            onClick={entrar}
+          >
+            Entrar
+          </button>
+        </div>
       </div>
     </div>
   );

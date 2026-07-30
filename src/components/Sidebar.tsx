@@ -75,6 +75,7 @@ const menus = [
     permissao: ["admin", "gerente"],
   },
 ];
+
 const menusMaster = [
   {
     nome: "Dashboard Master",
@@ -99,14 +100,13 @@ const menusMaster = [
 ];
 
 export default function Sidebar() {
-  
-const {
-  role,
-  isMaster,
-  isAdmin,
-  isGerente,
-  isFuncionario,
-} = usePermissao();
+  const {
+    role,
+    isMaster,
+    isAdmin,
+    isGerente,
+    isFuncionario,
+  } = usePermissao();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -120,28 +120,25 @@ const {
   function sair() {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
-
     router.push("/login");
   }
 
   function podeVer(menu: any) {
     if (!menu.permissao) return true;
-
     if (isAdmin) return menu.permissao.includes("admin");
-
-    if (isGerente)
-      return menu.permissao.includes("gerente");
-
-    if (isFuncionario)
-      return menu.permissao.includes("funcionario");
-
+    if (isGerente) return menu.permissao.includes("gerente");
+    if (isFuncionario) return menu.permissao.includes("funcionario");
     return false;
   }
+
+  // Seleciona dinamicamente a lista de menus com base na role, evitando repetição de código JSX
+  const listaMenuAtiva = role === "master" 
+    ? menusMaster 
+    : menus.filter((menu) => podeVer(menu));
 
   return (
     <>
       {/* Botão Mobile */}
-
       <button
         onClick={() => setMenuAberto(true)}
         className="
@@ -155,13 +152,15 @@ const {
           p-2
           rounded-lg
           shadow-lg
+          hover:bg-slate-800
+          transition-colors
         "
+        aria-label="Abrir Menu"
       >
         <Menu size={24} />
       </button>
 
-      {/* Fundo escuro */}
-
+      {/* Fundo escuro overlay para mobile */}
       {menuAberto && (
         <div
           onClick={() => setMenuAberto(false)}
@@ -171,10 +170,12 @@ const {
             inset-0
             bg-black/40
             z-40
+            backdrop-blur-xs
           "
         />
       )}
 
+      {/* Sidebar principal */}
       <aside
         className={`
           fixed
@@ -189,22 +190,19 @@ const {
           z-50
           transition-transform
           duration-300
-
+          shadow-xl
           ${
             menuAberto
               ? "translate-x-0"
               : "-translate-x-full"
           }
-
           lg:translate-x-0
           lg:static
         `}
       >
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-
           <div>
-
-            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
+            <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold shadow-md">
               ES
             </div>
 
@@ -215,87 +213,50 @@ const {
             <p className="text-slate-400 text-sm">
               Sistema de Gestão
             </p>
-
           </div>
 
           <button
             onClick={() => setMenuAberto(false)}
-            className="lg:hidden"
+            className="lg:hidden text-slate-400 hover:text-white transition-colors"
+            aria-label="Fechar Menu"
           >
-            <X />
+            <X size={24} />
           </button>
-
         </div>
 
         <nav className="flex-1 py-4 overflow-y-auto">
-               {role === "master"
-  ? menusMaster.map((menu) => {
-      const Icon = menu.icon;
+          {listaMenuAtiva.map((menu) => {
+            const Icon = menu.icon;
+            const ativo =
+              pathname === menu.href ||
+              pathname.startsWith(menu.href + "/");
 
-      const ativo =
-        pathname === menu.href ||
-        pathname.startsWith(menu.href + "/");
-
-      return (
-        <Link
-          key={menu.href}
-          href={menu.href}
-          className={`
-            flex
-            items-center
-            gap-3
-            px-6
-            py-3
-            transition
-            ${
-              ativo
-                ? "bg-blue-600 text-white"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-            }
-          `}
-        >
-          <Icon size={20} />
-          <span>{menu.nome}</span>
-        </Link>
-      );
-    })
-  : menus
-      .filter((menu) => podeVer(menu))
-      .map((menu) => {
-          const Icon = menu.icon;
-
-          const ativo =
-            pathname === menu.href ||
-            pathname.startsWith(menu.href + "/");
-
-          return (
-            <Link
-              key={menu.href}
-              href={menu.href}
-              className={`
-                flex
-                items-center
-                gap-3
-                px-6
-                py-3
-                transition
-                ${
-                  ativo
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }
-              `}
-            >
-              <Icon size={20} />
-              <span>{menu.nome}</span>
-            </Link>
-          );
-        })
-}
+            return (
+              <Link
+                key={menu.href}
+                href={menu.href}
+                className={`
+                  flex
+                  items-center
+                  gap-3
+                  px-6
+                  py-3
+                  transition-colors
+                  ${
+                    ativo
+                      ? "bg-blue-600 text-white font-medium"
+                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                  }
+                `}
+              >
+                <Icon size={20} className="shrink-0" />
+                <span className="truncate">{menu.nome}</span>
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="border-t border-slate-700 p-4">
-
           <button
             onClick={sair}
             className="
@@ -309,15 +270,13 @@ const {
               text-red-400
               hover:bg-slate-800
               hover:text-red-300
-              transition
+              transition-colors
             "
           >
-            <LogOut size={20} />
+            <LogOut size={20} className="shrink-0" />
             <span>Sair</span>
           </button>
-
         </div>
-
       </aside>
     </>
   );

@@ -21,18 +21,20 @@ export default function ConfiguracoesLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-8">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen bg-slate-100">
       <div className="max-w-5xl mx-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Configurações</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            Configurações
+          </h1>
+          <p className="text-gray-500 text-sm sm:text-base mt-1">
             Gerencie as configurações do sistema
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
-          {/* Abas com a linha alinhada exatamente como na referência */}
-          <div className="flex border-b border-gray-200 px-6 gap-8">
+        <div className="bg-white rounded-xl shadow border border-slate-200 overflow-hidden">
+          {/* Abas com rolagem horizontal em telas pequenas para evitar quebra de layout */}
+          <div className="flex border-b border-slate-200 px-4 sm:px-6 gap-6 sm:gap-8 overflow-x-auto scrollbar-none">
             {menus.map((menu) => {
               const Icon = menu.icon;
               const ativo = pathname === menu.href;
@@ -41,7 +43,7 @@ export default function ConfiguracoesLayout({
                 <Link
                   key={menu.href}
                   href={menu.href}
-                  className={`flex items-center gap-2 py-4 text-sm font-medium border-b-2 transition -mb-[1px] ${
+                  className={`flex items-center gap-2 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap -mb-[1px] ${
                     ativo
                       ? "border-blue-600 text-blue-600"
                       : "border-transparent text-gray-500 hover:text-gray-900"
@@ -54,7 +56,7 @@ export default function ConfiguracoesLayout({
             })}
           </div>
 
-          <div className="p-8">{children}</div>
+          <div className="p-4 sm:p-6 lg:p-8">{children}</div>
         </div>
       </div>
     </div>
