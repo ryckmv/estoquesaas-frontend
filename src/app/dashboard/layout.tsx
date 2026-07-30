@@ -35,12 +35,12 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden w-full">
-      {/* Sidebar - Oculta ou responsiva dependendo da implementação interna dela */}
+    <div className="min-h-screen bg-slate-100 flex w-full relative">
+      {/* Sidebar (mantém a estrutura original fixa/responsiva dela) */}
       <Sidebar />
 
-      {/* Conteúdo Principal */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* Conteúdo Principal com o espaçamento correto no desktop para o menu não cobrir */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64 h-screen overflow-hidden">
         <Header />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 w-full bg-slate-100">
