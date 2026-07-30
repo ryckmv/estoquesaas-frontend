@@ -17,274 +17,694 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+
 interface Venda {
+
   id: string;
   cliente: string;
   usuario: string;
   valor: number;
   status: string;
   criadoEm: string;
+
 }
 
+
+interface ProdutoBaixoEstoque {
+
+  nome: string;
+  quantidade: number;
+  estoqueMinimo: number;
+  precoCusto: number;
+
+}
+
+
 interface DashboardData {
-  resumo?: {
-    empresas?: number;
-    produtos?: number;
-    clientes?: number;
-    usuarios?: number;
-    vendas?: number;
+
+  resumo: {
+
+    produtos: number;
+    clientes: number;
+    usuarios: number;
+    vendas: number;
+
   };
 
-  financeiro?: {
-    vendasHoje?: number;
-    vendasMes?: number;
-    faturamentoHoje?: number;
-    faturamentoMes?: number;
-    faturamentoTotal?: number;
+
+  financeiro: {
+
+    vendasHoje: number;
+    vendasMes: number;
+    faturamentoHoje: number;
+    faturamentoMes: number;
+
   };
 
-  estoque?: {
-    valorEstoque?: number;
-    estoqueBaixo?: number;
-    semEstoque?: number;
 
-    produtosBaixoEstoque?: {
-      nome: string;
-      quantidade: number;
-      estoqueMinimo: number;
-    }[];
-  };
+estoque: {
+  valorEstoque: number;
+  estoqueBaixo: number;
+  semEstoque: number;
+  produtosBaixoEstoque: {
+    nome: string;
+    quantidade: number;
+    estoqueMinimo: number;
+  }[];
+};
 
-  ultimasVendas?: Venda[];
+  ultimasVendas: Venda[];
 
-  graficoVendas?: {
+
+  graficoVendas: {
+
     dia: string;
     vendas: number;
     faturamento: number;
+
   }[];
 
-  produtosMaisVendidos?: {
+
+  produtosMaisVendidos: {
+
     produto: string;
     quantidade: number;
+
   }[];
+
 }
+
+
 
 export default function Dashboard() {
+
+
   const [dados, setDados] = useState<DashboardData | null>(null);
+
   const [carregando, setCarregando] = useState(true);
 
+
+
   useEffect(() => {
+
+
     async function carregar() {
+
+
       try {
+
+
         const response = await api.get("/dashboard");
-        console.log("DASHBOARD:", response.data);
+
         setDados(response.data);
+
+
       } catch (error) {
+
+
         console.error(error);
+
         alert("Erro ao carregar dashboard");
+
+
       } finally {
+
+
         setCarregando(false);
+
+
       }
+
+
     }
 
+
     carregar();
+
+
   }, []);
 
+
+
   if (carregando) {
+
+
     return (
-      <div className="flex items-center justify-center h-screen text-slate-600 font-medium animate-pulse">
+
+      <div className="flex items-center justify-center h-screen text-xl">
+
         Carregando...
+
       </div>
+
     );
+
   }
+
+
 
   if (!dados) {
+
+
     return (
-      <div className="flex items-center justify-center h-screen text-slate-600 font-medium">
+
+      <div className="flex items-center justify-center h-screen">
+
         Nenhum dado encontrado.
+
       </div>
+
     );
+
   }
 
-  const faturamento =
-    dados.financeiro?.faturamentoMes ??
-    dados.financeiro?.faturamentoTotal ??
-    0;
+
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 sm:p-6 lg:p-8 w-full overflow-x-hidden">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-1 sm:mb-2">
+
+    <div className="min-h-screen bg-slate-100 p-8">
+
+
+      <div className="mb-8">
+
+        <h1 className="text-4xl font-bold">
+
           Dashboard
+
         </h1>
 
-        <p className="text-gray-500 text-sm sm:text-base">
+
+        <p className="text-gray-500">
+
           Bem-vindo ao Estoque SaaS
+
         </p>
+
+
       </div>
 
-      {/* Grid de Cards de Resumo */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+
         <Card
+
           titulo="Produtos"
-          valor={dados.resumo?.produtos ?? 0}
-          icon={<Package className="w-6 h-6 text-slate-500" />}
+
+          valor={dados.resumo.produtos}
+
+          icon={<Package size={28}/>}
+
+          cor="bg-blue-600"
+
         />
 
+
         <Card
+
           titulo="Clientes"
-          valor={dados.resumo?.clientes ?? 0}
-          icon={<Users className="w-6 h-6 text-slate-500" />}
+
+          valor={dados.resumo.clientes}
+
+          icon={<Users size={28}/>}
+
+          cor="bg-green-600"
+
         />
 
+
         <Card
+
           titulo="Vendas"
-          valor={dados.resumo?.vendas ?? 0}
-          icon={<ShoppingCart className="w-6 h-6 text-slate-500" />}
+
+          valor={dados.resumo.vendas}
+
+          icon={<ShoppingCart size={28}/>}
+
+          cor="bg-orange-500"
+
         />
+
 
         <Card
-          titulo="Faturamento"
-          valor={formatarMoeda(faturamento)}
-          icon={<DollarSign className="w-6 h-6 text-slate-500" />}
+
+          titulo="Faturamento do Mês"
+
+          valor={dados.financeiro.faturamentoMes.toLocaleString(
+
+            "pt-BR",
+
+            {
+
+              style:"currency",
+
+              currency:"BRL"
+
+            }
+
+          )}
+
+          icon={<DollarSign size={28}/>}
+
+          cor="bg-emerald-600"
+
         />
+
+
       </div>
+            <div className="grid lg:grid-cols-2 gap-6 mt-8">
 
-      {/* Grid Financeiro e Estoque */}
-      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
-        <Box titulo="Financeiro" icon={<TrendingUp className="w-5 h-5 text-blue-600" />}>
-          <Linha
-            titulo="Vendas Hoje"
-            valor={dados.financeiro?.vendasHoje ?? 0}
-          />
 
-          <Linha
-            titulo="Vendas do Mês"
-            valor={dados.financeiro?.vendasMes ?? 0}
-          />
+        <div className="bg-white rounded-xl shadow p-6">
 
-          <Linha
-            titulo="Faturamento"
-            valor={formatarMoeda(faturamento)}
-          />
-        </Box>
 
-        <Box titulo="Estoque" icon={<AlertTriangle className="w-5 h-5 text-amber-500" />}>
-          <Linha
-            titulo="Valor Estoque"
-            valor={formatarMoeda(dados.estoque?.valorEstoque ?? 0)}
-          />
+          <h2 className="font-bold text-xl mb-5 flex items-center gap-2">
 
-          <Linha
-            titulo="Estoque Baixo"
-            valor={dados.estoque?.estoqueBaixo ?? 0}
-          />
+            <TrendingUp />
 
-          <Linha
-            titulo="Sem Estoque"
-            valor={dados.estoque?.semEstoque ?? 0}
-          />
-        </Box>
-      </div>
+            Financeiro
 
-      {/* Gráficos de Faturamento e Vendas */}
-      <div className="grid xl:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
-        <div className="bg-white rounded-xl shadow p-4 sm:p-6 overflow-hidden">
-          <GraficoFaturamento dados={dados.graficoVendas ?? []} />
+          </h2>
+
+
+
+          <div className="space-y-4">
+
+
+            <Linha
+              titulo="Vendas Hoje"
+              valor={dados.financeiro.vendasHoje}
+            />
+
+
+            <Linha
+              titulo="Vendas do Mês"
+              valor={dados.financeiro.vendasMes}
+            />
+
+
+            <Linha
+              titulo="Faturamento Hoje"
+              valor={dados.financeiro.faturamentoHoje.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            />
+
+
+            <Linha
+              titulo="Faturamento do Mês"
+              valor={dados.financeiro.faturamentoMes.toLocaleString(
+                "pt-BR",
+                {
+                  style: "currency",
+                  currency: "BRL",
+                }
+              )}
+            />
+
+
+          </div>
+
+
         </div>
 
-        <div className="bg-white rounded-xl shadow p-4 sm:p-6 overflow-hidden">
-          <GraficoVendas dados={dados.graficoVendas ?? []} />
+
+
+
+        <div className="bg-white rounded-xl shadow p-6">
+
+
+          <h2 className="font-bold text-xl mb-5 flex items-center gap-2">
+
+            <AlertTriangle />
+
+            Estoque
+
+          </h2>
+
+
+
+          <div className="space-y-4">
+
+
+            <Linha
+              titulo="Valor em Estoque"
+              valor={dados.estoque.valorEstoque.toLocaleString(
+                "pt-BR",
+                {
+                  style:"currency",
+                  currency:"BRL"
+                }
+              )}
+            />
+
+
+            <Linha
+              titulo="Produtos com Estoque Baixo"
+              valor={dados.estoque.estoqueBaixo}
+            />
+
+
+            <Linha
+              titulo="Produtos Sem Estoque"
+              valor={dados.estoque.semEstoque}
+            />
+
+
+          </div>
+
+
         </div>
+
+
       </div>
 
-      {/* Alerta de Estoque */}
-      <div className="mt-6 sm:mt-8 bg-white rounded-xl shadow p-4 sm:p-6 overflow-hidden">
-        <AlertaEstoque produtos={dados.estoque?.produtosBaixoEstoque ?? []} />
+
+
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8">
+
+
+        <GraficoFaturamento
+          dados={dados.graficoVendas}
+        />
+
+
+        <GraficoVendas
+          dados={dados.graficoVendas}
+        />
+
+
       </div>
 
-      {/* Gráfico de Produtos Mais Vendidos */}
-      <div className="mt-6 sm:mt-8 bg-white rounded-xl shadow p-4 sm:p-6 overflow-hidden">
-        <GraficoProdutosMaisVendidos dados={dados.produtosMaisVendidos ?? []} />
+
+
+
+      <div className="mt-8">
+
+
+        <AlertaEstoque
+
+          produtos={dados.estoque.produtosBaixoEstoque ?? []}
+
+        />
+
+
       </div>
+
+
+
+
+      <div className="mt-8">
+
+
+        <GraficoProdutosMaisVendidos
+
+          dados={dados.produtosMaisVendidos ?? []}
+
+        />
+
+
+      </div>
+
+
+
+
+      <div className="mt-8 bg-white rounded-xl shadow">
+
+
+        <div className="border-b p-5">
+
+
+          <h2 className="text-2xl font-bold">
+
+            Últimas Vendas
+
+          </h2>
+
+
+        </div>
+
+
+
+        <div className="overflow-x-auto">
+
+
+          <table className="w-full">
+
+
+            <thead className="bg-gray-50">
+
+
+              <tr>
+
+                <th className="text-left p-4">Cliente</th>
+                <th className="text-left p-4">Usuário</th>
+                <th className="text-left p-4">Valor</th>
+                <th className="text-left p-4">Status</th>
+                <th className="text-left p-4">Data</th>
+
+              </tr>
+
+
+            </thead>
+
+
+
+            <tbody>
+
+
+              {dados.ultimasVendas.map((venda)=>(
+
+
+                <tr
+
+                  key={venda.id}
+
+                  className="border-b hover:bg-slate-50"
+
+                >
+
+
+                  <td className="p-4">
+
+                    {venda.cliente}
+
+                  </td>
+
+
+                  <td className="p-4">
+
+                    {venda.usuario}
+
+                  </td>
+
+
+                  <td className="p-4 font-semibold">
+
+
+                    {venda.valor.toLocaleString(
+
+                      "pt-BR",
+
+                      {
+
+                        style:"currency",
+
+                        currency:"BRL"
+
+                      }
+
+                    )}
+
+
+                  </td>
+
+
+                  <td className="p-4">
+
+
+                    <span
+
+                      className={`px-3 py-1 rounded-full text-white text-sm ${
+                        
+                        venda.status === "confirmada"
+
+                        ? "bg-green-600"
+
+                        : "bg-red-600"
+
+                      }`}
+
+                    >
+
+                      {venda.status}
+
+                    </span>
+
+
+                  </td>
+
+
+
+                  <td className="p-4">
+
+
+                    {new Date(
+
+                      venda.criadoEm
+
+                    ).toLocaleDateString("pt-BR")}
+
+
+                  </td>
+
+
+                </tr>
+
+
+              ))}
+
+
+            </tbody>
+
+
+          </table>
+
+
+        </div>
+
+
+      </div>
+
+
+
     </div>
+
   );
+
 }
 
-function formatarMoeda(valor: number) {
-  return valor.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
+
+
 
 function Card({
+
   titulo,
+
   valor,
+
   icon,
-}: {
-  titulo: string;
-  valor: any;
-  icon: React.ReactNode;
-}) {
+
+  cor,
+
+}:{
+
+  titulo:string;
+
+  valor:any;
+
+  icon:React.ReactNode;
+
+  cor:string;
+
+}){
+
+
   return (
-    <div className="bg-white rounded-xl shadow p-5 sm:p-6 flex flex-col justify-between">
-      <div>
-        <p className="text-gray-500 text-sm sm:text-base font-medium">
-          {titulo}
-        </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-slate-900 truncate">
-          {valor}
-        </h2>
+    <div className="bg-white rounded-xl shadow hover:shadow-lg transition">
+
+
+      <div className="flex justify-between items-center p-6">
+
+
+        <div>
+
+
+          <p className="text-gray-500">
+
+            {titulo}
+
+          </p>
+
+
+          <h2 className="text-3xl font-bold mt-2">
+
+            {valor}
+
+          </h2>
+
+
+        </div>
+
+
+
+        <div className={`${cor} p-4 rounded-xl text-white`}>
+
+          {icon}
+
+        </div>
+
+
+
       </div>
 
-      <div className="mt-3 sm:mt-4">
-        {icon}
-      </div>
+
     </div>
+
   );
+
+
 }
 
-function Box({
-  titulo,
-  icon,
-  children,
-}: {
-  titulo: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white rounded-xl shadow p-5 sm:p-6">
-      <h2 className="font-bold text-lg sm:text-xl mb-4 sm:mb-5 flex gap-2 items-center text-slate-900">
-        {icon}
-        {titulo}
-      </h2>
 
-      <div className="space-y-1">
-        {children}
-      </div>
-    </div>
-  );
-}
+
 
 function Linha({
+
   titulo,
+
   valor,
-}: {
-  titulo: string;
-  valor: any;
-}) {
+
+}:{
+
+  titulo:string;
+
+  valor:any;
+
+}){
+
+
   return (
-    <div className="flex justify-between items-center border-b border-slate-100 py-3 text-sm sm:text-base">
-      <span className="text-slate-600">
+
+    <div className="flex justify-between border-b pb-2">
+
+
+      <span className="text-gray-600">
+
         {titulo}
+
       </span>
 
-      <span className="font-bold text-slate-900">
+
+
+      <span className="font-bold">
+
         {valor}
+
       </span>
+
+
+
     </div>
+
   );
+
+
 }
