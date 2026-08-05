@@ -1,187 +1,43 @@
-"use client";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, CalendarDays, CreditCard, MapPin, ShoppingCart, UserRound } from "lucide-react";
+import DemoActionButton from "@/components/demo/DemoActionButton";
+import StatusBadge from "@/components/demo/StatusBadge";
+import { sales } from "@/mocks/data";
+import { formatCurrency, formatDateTime } from "@/lib/formatters";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import api from "@/services/api";
-import { Loader2, ArrowLeft, Receipt, User, Calendar, Tag } from "lucide-react";
-
-interface Venda {
-  id: string;
-  cliente: {
-    id: string;
-    nome: string;
-  } | null;
-  valorTotal: number;
-  status: string;
-  criadoEm: string;
-  itens: {
-    produto: string;
-    quantidade: number;
-    precoVendaUnitario: number;
-  }[];
+export function generateStaticParams() {
+  return sales.map((sale) => ({ id: sale.id }));
 }
 
-export default function DetalhesVenda() {
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id as string;
-
-  const [venda, setVenda] = useState<Venda | null>(null);
-  const [carregando, setCarregando] = useState(true);
-
-  async function carregarVenda() {
-    try {
-      const resposta = await api.get(`/vendas/${id}`);
-      setVenda(resposta.data.venda);
-    } catch (erro) {
-      console.error("Erro ao buscar venda", erro);
-    } finally {
-      setCarregando(false);
-    }
-  }
-
-  useEffect(() => {
-    carregarVenda();
-  }, []);
-
-  if (carregando) {
-    return (
-      <div className="p-8 flex justify-center items-center min-h-screen text-slate-500 font-medium animate-pulse">
-        <Loader2 className="animate-spin text-blue-600 mr-2" size={24} />
-        Carregando detalhes da venda...
-      </div>
-    );
-  }
-
-  if (!venda) {
-    return (
-      <div className="p-8 min-h-screen bg-slate-100 flex flex-col items-center justify-center">
-        <div className="bg-white rounded-xl shadow p-8 text-center border border-slate-200 max-w-md w-full">
-          <p className="text-slate-700 font-medium mb-4">Venda não encontrada.</p>
-          <button
-            onClick={() => router.back()}
-            className="inline-flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={16} />
-            Voltar
-          </button>
-        </div>
-      </div>
-    );
-  }
+export default async function SaleDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const sale = sales.find((item) => item.id === id);
+  if (!sale) notFound();
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-slate-100 min-h-screen">
-      {/* Cabeçalho */}
-      <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Receipt size={28} className="text-blue-600" />
-            Venda #{venda.id.slice(0, 8)}...
-          </h1>
-          <p className="text-gray-500 text-sm sm:text-base mt-1">
-            Informações detalhadas sobre a transação
-          </p>
-        </div>
-
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          Voltar
-        </button>
+    <div className="page-enter space-y-6">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div><Link href="/dashboard/vendas" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-blue-600"><ArrowLeft size={16} /> Voltar para vendas</Link><div className="mt-3 flex flex-wrap items-center gap-3"><h2 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Venda {sale.id}</h2><StatusBadge status={sale.status} /></div><p className="mt-1 text-sm text-slate-500">Registrada em {formatDateTime(sale.date)} por {sale.seller}</p></div>
+        <div className="flex gap-2"><DemoActionButton iconName="edit" variant="secondary">Editar</DemoActionButton><DemoActionButton iconName="cancel" variant="danger">Cancelar venda</DemoActionButton></div>
       </div>
 
-      {/* Card de Informações Gerais */}
-      <div className="bg-white rounded-xl shadow border border-slate-200 p-6 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg">
-            <User size={20} />
-          </div>
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Cliente
-            </span>
-            <span className="text-slate-900 font-medium">
-              {venda.cliente?.nome ?? "Sem cliente"}
-            </span>
-          </div>
-        </div>
+      <div className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
+        <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+          <div className="border-b border-slate-100 px-5 py-4 sm:px-6"><h3 className="font-bold text-slate-950">Itens vendidos</h3><p className="mt-0.5 text-xs text-slate-500">{sale.items.reduce((total, item) => total + item.quantity, 0)} unidades em {sale.items.length} produtos</p></div>
+          <div className="overflow-x-auto"><table className="data-table w-full min-w-[650px] text-left text-sm"><thead className="bg-slate-50"><tr><th>Produto</th><th className="text-center">Qtd.</th><th className="text-right">Preço unitário</th><th className="text-right">Subtotal</th></tr></thead><tbody>{sale.items.map((item) => <tr key={item.productId}><td><Link href={`/dashboard/produtos/detalhes/${item.productId}`} className="font-semibold text-slate-900 hover:text-blue-600">{item.productName}</Link><p className="mt-0.5 text-xs text-slate-400">{item.productId}</p></td><td className="text-center font-medium">{item.quantity}</td><td className="text-right text-slate-600">{formatCurrency(item.unitPrice)}</td><td className="text-right font-semibold">{formatCurrency(item.subtotal)}</td></tr>)}</tbody></table></div>
+          <div className="ml-auto max-w-sm space-y-3 border-t border-slate-100 p-5 text-sm sm:p-6"><div className="flex justify-between text-slate-500"><span>Subtotal</span><span>{formatCurrency(sale.subtotal)}</span></div><div className="flex justify-between text-slate-500"><span>Desconto</span><span>− {formatCurrency(sale.discount)}</span></div><div className="flex justify-between border-t border-slate-100 pt-3 text-lg font-bold text-slate-950"><span>Total</span><span className="text-blue-600">{formatCurrency(sale.total)}</span></div></div>
+        </section>
 
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
-            <Tag size={20} />
-          </div>
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Status
-            </span>
-            <span className="inline-block px-2.5 py-0.5 text-xs font-medium bg-slate-100 text-slate-800 rounded-full">
-              {venda.status}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 bg-purple-50 text-purple-600 rounded-lg">
-            <Calendar size={20} />
-          </div>
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">
-              Data e Hora
-            </span>
-            <span className="text-slate-900 font-medium text-sm">
-              {new Date(venda.criadoEm).toLocaleString("pt-BR")}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabela de Produtos */}
-      <div className="bg-white rounded-xl shadow overflow-hidden border border-slate-200 w-full mb-6">
-        <div className="p-4 sm:p-6 border-b border-slate-200">
-          <h2 className="text-lg font-bold text-slate-900">Produtos da Venda</h2>
-        </div>
-
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse min-w-[600px]">
-            <thead className="bg-slate-50 text-slate-700 text-xs sm:text-sm uppercase tracking-wider">
-              <tr className="border-b border-slate-200">
-                <th className="p-3 sm:p-4 font-semibold">Produto</th>
-                <th className="p-3 sm:p-4 font-semibold">Quantidade</th>
-                <th className="p-3 sm:p-4 font-semibold">Valor Unitário</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100 text-sm sm:text-base">
-              {venda.itens.map((item, index) => (
-                <tr key={index} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-3 sm:p-4 font-medium text-slate-900">
-                    {item.produto}
-                  </td>
-                  <td className="p-3 sm:p-4 text-slate-600 font-mono">
-                    {item.quantidade}
-                  </td>
-                  <td className="p-3 sm:p-4 text-slate-600 font-mono">
-                    R$ {Number(item.precoVendaUnitario).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Rodapé com Valor Total */}
-      <div className="bg-white rounded-xl shadow border border-slate-200 p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <span className="text-slate-500 text-sm font-medium">
-          Valor total da transação calculada pelo sistema
-        </span>
-        <div className="text-xl sm:text-2xl font-bold text-slate-900">
-          Total: <span className="text-blue-600">R$ {Number(venda.valorTotal).toFixed(2)}</span>
+        <div className="space-y-6">
+          <section className="rounded-2xl bg-slate-950 p-6 text-white shadow-xl shadow-slate-200"><div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500/15 text-blue-300"><UserRound size={20} /></div><div><p className="text-xs text-slate-400">Cliente</p><Link href={`/dashboard/clientes/detalhes/${sale.customerId}`} className="font-bold hover:text-blue-300">{sale.customerName}</Link></div></div><div className="mt-6 space-y-4 border-t border-white/10 pt-5"><Info icon={CreditCard} label="Forma de pagamento" value={sale.paymentMethod} /><Info icon={MapPin} label="Canal de venda" value={sale.channel} /><Info icon={CalendarDays} label="Data e hora" value={formatDateTime(sale.date)} /></div></section>
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"><div className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-600"><ShoppingCart size={19} /></div><div><h3 className="font-semibold text-slate-900">Venda registrada</h3><p className="mt-1 text-sm leading-6 text-slate-500">Todos os dados exibidos são fictícios e foram preparados para esta demonstração.</p></div></div></section>
         </div>
       </div>
     </div>
   );
+}
+
+function Info({ icon: Icon, label, value }: { icon: typeof CreditCard; label: string; value: string }) {
+  return <div className="flex gap-3"><Icon className="mt-0.5 shrink-0 text-slate-500" size={17} /><div><p className="text-xs text-slate-500">{label}</p><p className="mt-0.5 text-sm font-semibold text-slate-200">{value}</p></div></div>;
 }

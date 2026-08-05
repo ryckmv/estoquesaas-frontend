@@ -2,306 +2,105 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
-import { usePermissao } from "@/hooks/usePermissao";
-
+import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  Package,
-  Users,
-  ShoppingCart,
-  UserCog,
   BarChart3,
-  Settings,
-  LogOut,
-  Paperclip,
-  Building2,
-  ShieldCheck,
+  Boxes,
+  LayoutDashboard,
+  Menu,
+  Package,
+  ShoppingCart,
+  Users,
+  X,
 } from "lucide-react";
 
-const menus = [
-  {
-    nome: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    nome: "Produtos",
-    href: "/dashboard/produtos",
-    icon: Package,
-    permissao: ["admin", "gerente", "funcionario"],
-  },
-  {
-    nome: "Estoque",
-    href: "/dashboard/estoque",
-    icon: Package,
-    permissao: ["admin", "gerente", "funcionario"],
-  },
-  {
-    nome: "Clientes",
-    href: "/dashboard/clientes",
-    icon: Users,
-    permissao: ["admin", "gerente", "funcionario"],
-  },
-  {
-    nome: "Vendas",
-    href: "/dashboard/vendas",
-    icon: ShoppingCart,
-    permissao: ["admin", "gerente", "funcionario"],
-  },
-  {
-    nome: "Usuários",
-    href: "/dashboard/usuarios",
-    icon: UserCog,
-    permissao: ["admin"],
-  },
-  {
-    nome: "Relatórios",
-    href: "/dashboard/relatorios",
-    icon: BarChart3,
-    permissao: ["admin", "gerente"],
-  },
-  {
-    nome: "Configurações",
-    href: "/dashboard/configuracoes",
-    icon: Settings,
-    permissao: ["admin", "gerente"],
-  },
-  {
-    nome: "Auditoria",
-    href: "/dashboard/auditoria",
-    icon: Paperclip,
-    permissao: ["admin", "gerente"],
-  },
-];
-
-const menusMaster = [
-  {
-    nome: "Dashboard Master",
-    href: "/master",
-    icon: LayoutDashboard,
-  },
-  {
-    nome: "Empresas",
-    href: "/master/empresas",
-    icon: Building2,
-  },
-  {
-    nome: "Usuários",
-    href: "/master/usuarios",
-    icon: Users,
-  },
-  {
-    nome: "Auditoria Sistema",
-    href: "/master/auditoria",
-    icon: ShieldCheck,
-  },
+const navigation = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Produtos", href: "/dashboard/produtos", icon: Package },
+  { label: "Estoque", href: "/dashboard/estoque", icon: Boxes },
+  { label: "Clientes", href: "/dashboard/clientes", icon: Users },
+  { label: "Vendas", href: "/dashboard/vendas", icon: ShoppingCart },
+  { label: "Relatórios", href: "/dashboard/relatorios", icon: BarChart3 },
 ];
 
 export default function Sidebar() {
-  const {
-    role,
-    isMaster,
-    isAdmin,
-    isGerente,
-    isFuncionario,
-  } = usePermissao();
   const pathname = usePathname();
-  const router = useRouter();
+  const [open, setOpen] = useState(false);
 
-  const [menuAberto, setMenuAberto] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
 
-  useEffect(() => {
-    setMenuAberto(false);
-  }, [pathname]);
-
-  function sair() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-    router.push("/login");
-  }
-
-  function podeVer(menu: any) {
-    if (!menu.permissao) return true;
-
-    if (isAdmin)
-      return menu.permissao.includes("admin");
-
-    if (isGerente)
-      return menu.permissao.includes("gerente");
-
-    if (isFuncionario)
-      return menu.permissao.includes("funcionario");
-
-    return false;
-  }
-const listaMenus = isMaster
-  ? menusMaster
-  : menus.filter((menu) => podeVer(menu));
-
-return (
-  <>
-    {/* Botão do menu mobile */}
-    <button
-      onClick={() => setMenuAberto(true)}
-      className="
-        lg:hidden
-        fixed
-        top-4
-        left-4
-        z-[60]
-        bg-slate-900
-        text-white
-        p-2
-        rounded-lg
-        shadow-lg
-      "
-    >
-      <Menu size={24} />
-    </button>
-
-    {menuAberto && (
-      <div
-        onClick={() => setMenuAberto(false)}
-        className="
-          fixed
-          inset-0
-          bg-black/40
-          z-40
-          lg:hidden
-        "
-      />
-    )}
-
-    <aside
-      className={`
-        fixed
-        lg:static
-        top-0
-        left-0
-        z-50
-        h-screen
-        w-64
-        shrink-0
-        bg-slate-900
-        text-white
-        flex
-        flex-col
-        transition-transform
-        duration-300
-
-        ${
-          menuAberto
-            ? "translate-x-0"
-            : "-translate-x-full"
-        }
-
-        lg:translate-x-0
-      `}
-    >
-      <div className="border-b border-slate-700 p-6">
-
-        <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-2xl font-bold">
-          ES
-        </div>
-
-        <h1 className="text-xl font-bold mt-4">
-          Estoque SaaS
-        </h1>
-
-        <p className="text-slate-400 text-sm">
-          Sistema de Gestão
-        </p>
-
-      
-
+  return (
+    <>
       <button
-        onClick={() => setMenuAberto(false)}
-        className="lg:hidden absolute top-5 right-5"
+        type="button"
+        onClick={() => setOpen(true)}
+        className="fixed left-4 top-4 z-40 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-white shadow-lg lg:hidden"
+        aria-label="Abrir menu"
       >
-        <X />
+        <Menu size={20} />
       </button>
 
-    </div>
+      {open && (
+        <button
+          type="button"
+          aria-label="Fechar menu"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-slate-950/55 backdrop-blur-sm lg:hidden"
+        />
+      )}
 
-    <nav className="flex-1 overflow-y-auto py-4">
-
-      {listaMenus.map((menu) => {
-
-        const Icon = menu.icon;
-
-        const ativo =
-          pathname === menu.href ||
-          pathname.startsWith(menu.href + "/");
-
-        return (
-
-          <Link
-            key={menu.href}
-            href={menu.href}
-            className={`
-              flex
-              items-center
-              gap-3
-              px-6
-              py-3
-              transition
-
-              ${
-                ativo
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
-              }
-            `}
-          >
-
-            <Icon size={20} />
-
-            <span>
-              {menu.nome}
-            </span>
-
-          </Link>
-
-        );
-
-      })}
-
-    </nav>
-            <div className="border-t border-slate-700 p-4">
-
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-hidden bg-slate-950 text-white shadow-2xl transition-transform duration-300 lg:static lg:w-64 lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <div className="relative border-b border-white/10 px-6 pb-6 pt-7">
           <button
-            onClick={sair}
-            className="
-              w-full
-              flex
-              items-center
-              gap-3
-              px-3
-              py-3
-              rounded-lg
-              text-red-400
-              hover:bg-slate-800
-              hover:text-red-300
-              transition
-            "
+            type="button"
+            onClick={() => setOpen(false)}
+            className="absolute right-4 top-4 rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white lg:hidden"
+            aria-label="Fechar menu"
           >
-
-            <LogOut size={20} />
-
-            <span>
-              Sair
-            </span>
-
+            <X size={20} />
           </button>
-
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-600 font-bold shadow-lg shadow-blue-600/25">
+              ES
+            </div>
+            <div>
+              <p className="text-lg font-bold tracking-tight">EstoqueSaaS</p>
+              <p className="text-xs text-slate-400">Gestão inteligente</p>
+            </div>
+          </div>
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-[11px] font-bold tracking-[0.16em] text-amber-300">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-300" />
+            DEMONSTRAÇÃO
+          </div>
         </div>
 
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Navegação principal">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all ${active ? "bg-blue-600 text-white shadow-lg shadow-blue-950/35" : "text-slate-300 hover:bg-white/7 hover:text-white"}`}
+              >
+                <Icon size={19} className={active ? "text-white" : "text-slate-400 group-hover:text-blue-300"} />
+                {item.label}
+                {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white" />}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-white/10 p-4">
+          <div className="rounded-xl bg-white/5 p-3">
+            <p className="text-xs font-semibold text-slate-200">Ambiente seguro</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-slate-500">Dados fictícios. Nenhuma alteração é salva.</p>
+          </div>
+        </div>
       </aside>
-
     </>
-
   );
-
 }
